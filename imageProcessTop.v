@@ -25,21 +25,24 @@ input   axi_clk,
 input   axi_reset_n,
 //slave interface
 input   i_data_valid,
-input [7:0] i_data,
+input [INTEGER_BITS+FIXED_POINT_BITS-1:0] i_data,
 output  o_data_ready,
 //master interface
 output  o_data_valid,
-output [7:0] o_data,
+output [INTEGER_BITS+FIXED_POINT_BITS-1:0] o_data,
 input   i_data_ready,
 //interrupt
 output  o_intr
 
     );
 
-wire [71:0] pixel_data;
+parameter INTEGER_BITS = 8;
+parameter FIXED_POINT_BITS = 4;
+
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0] pixel_data;
 wire pixel_data_valid;
 wire axis_prog_full;
-wire [7:0] convolved_data;
+wire [INTEGER_BITS+FIXED_POINT_BITS-1:0] convolved_data;
 wire convolved_data_valid;
 
 assign o_data_ready = !axis_prog_full;

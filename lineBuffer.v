@@ -20,16 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+
 module lineBuffer(
 input   i_clk,
 input   i_rst,
-input [7:0] i_data,
+input [INTEGER_BITS+FIXED_POINT_BITS-1:0] i_data,
 input   i_data_valid,
-output [23:0] o_data,
+output [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] o_data,
 input i_rd_data
 );
+parameter INTEGER_BITS = 8;
+parameter FIXED_POINT_BITS = 4;
 
-reg [7:0] line [511:0]; //line buffer
+reg [INTEGER_BITS+FIXED_POINT_BITS-1:0] line [511:0]; //line buffer
 reg [8:0] wrPntr;
 reg [8:0] rdPntr;
 

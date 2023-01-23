@@ -22,22 +22,25 @@
 module imageControl(
 input                    i_clk,
 input                    i_rst,
-input [7:0]              i_pixel_data,
+input [INTEGER_BITS+FIXED_POINT_BITS-1:0]  i_pixel_data,
 input                    i_pixel_data_valid,
-output reg [71:0]        o_pixel_data,
+output reg [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0]        o_pixel_data,
 output                   o_pixel_data_valid,
 output reg               o_intr
 );
+
+parameter INTEGER_BITS = 8;
+parameter FIXED_POINT_BITS = 4;
 
 reg [8:0] pixelCounter;
 reg [1:0] currentWrLineBuffer;
 reg [3:0] lineBuffDataValid;
 reg [3:0] lineBuffRdData;
 reg [1:0] currentRdLineBuffer;
-wire [23:0] lb0data;
-wire [23:0] lb1data;
-wire [23:0] lb2data;
-wire [23:0] lb3data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb0data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb1data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb2data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb3data;
 reg [8:0] rdCounter;
 reg rd_line_buffer;
 reg [11:0] totalPixelCounter;

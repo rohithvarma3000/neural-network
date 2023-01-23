@@ -25,16 +25,19 @@
 module tb(
 
     );
+
+parameter INTEGER_BITS = 8;
+parameter FIXED_POINT_BITS = 4;
     
  
  reg clk;
  reg reset;
- reg [7:0] imgData;
+ reg [INTEGER_BITS+FIXED_POINT_BITS-1:0] imgData;
  integer file,file1,i;
  reg imgDataValid;
  integer sentSize;
  wire intr;
- wire [7:0] outData;
+ wire [INTEGER_BITS+FIXED_POINT_BITS-1:0] outData;
  wire outDataValid;
  integer receivedData=0;
 

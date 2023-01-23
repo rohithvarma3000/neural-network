@@ -22,17 +22,22 @@
 
 module conv(
 input        i_clk,
-input [71:0] i_pixel_data,
+input [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0] i_pixel_data,
 input        i_pixel_data_valid,
-output reg [7:0] o_convolved_data,
+output reg [INTEGER_BITS+FIXED_POINT_BITS-1:0] o_convolved_data,
 output reg   o_convolved_data_valid
     );
+
+    parameter INTEGER_BITS = 8;
+parameter FIXED_POINT_BITS = 4;
     
 integer i; 
-reg [7:0] kernel [8:0];
-reg [15:0] multData[8:0];
-reg [15:0] sumDataInt;
-reg [15:0] sumData;
+reg [INTEGER_BITS+FIXED_POINT_BITS-1:0] kernel [8:0];
+reg [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] multData[8:0];
+reg [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] sumDataInt;
+reg [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] sumData;
+reg [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] temp1;
+reg [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] temp2;
 reg multDataValid;
 reg sumDataValid;
 reg convolved_data_valid;
@@ -41,7 +46,7 @@ initial
 begin
     for(i=0;i<9;i=i+1)
     begin
-        kernel[i] = 1;
+        kernel[i] = 5'b10000;
     end
 end    
     
@@ -49,7 +54,7 @@ always @(posedge i_clk)
 begin
     for(i=0;i<9;i=i+1)
     begin
-        multData[i] <= kernel[i]*i_pixel_data[i*8+:8];
+        multData[i] <= kernel[i]*i_pixel_data[i*(INTEGER_BITS+FIXED_POINT_BITS):(i+1)*(INTEGER_BITS+FIXED_POINT_BITS)];
     end
     multDataValid <= i_pixel_data_valid;
 end
@@ -72,7 +77,9 @@ end
     
 always @(posedge i_clk)
 begin
-    o_convolved_data <= sumData/9;
+    temp1 = sumData >> 3;
+    temp2 = temp1 + sumData;
+    o_convolved_data = temp2[INTEGER_BITS+2*FIXED_POINT_BITS-1:FIXED_POINT_BITS-1];
     o_convolved_data_valid <= sumDataValid;
 end
     
