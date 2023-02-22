@@ -41,6 +41,9 @@ parameter FIXED_POINT_BITS = 4;
  wire outDataValid;
  integer receivedData=0;
 
+ reg [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0] kernel_vals;
+ reg kernel_reset;
+
  initial
  begin
     clk = 1'b0;
@@ -131,6 +134,8 @@ parameter FIXED_POINT_BITS = 4;
     //slave interface
     .i_data_valid(imgDataValid),
     .i_data(imgData),
+    .kernel_reset(kernel_reset),
+    .kernel_vals(kernel_vals),
     .o_data_ready(),
     //master interface
     .o_data_valid(outDataValid),

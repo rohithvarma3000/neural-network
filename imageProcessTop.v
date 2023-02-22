@@ -26,6 +26,8 @@ input   axi_reset_n,
 //slave interface
 input   i_data_valid,
 input [INTEGER_BITS+FIXED_POINT_BITS-1:0] i_data,
+input kernel_reset,
+input [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0]kernel_vals,
 output  o_data_ready,
 //master interface
 output  o_data_valid,
@@ -61,6 +63,8 @@ imageControl IC(
      .i_clk(axi_clk),
      .i_pixel_data(pixel_data),
      .i_pixel_data_valid(pixel_data_valid),
+     .kernel_reset(kernel_reset),
+    .kernel_vals(kernel_vals),
      .o_convolved_data(convolved_data),
      .o_convolved_data_valid(convolved_data_valid)
  ); 
