@@ -39,7 +39,7 @@ reg [3:0] lineBuffRdData;
 reg [1:0] currentRdLineBuffer;
 wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb0data;
 wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb1data;
-wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb2data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb29999data;
 wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb3data;
 reg [8:0] rdCounter;
 reg rd_line_buffer;

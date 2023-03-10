@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module compare(input [INTEGER_BITS+FIXED_POINT_BITS-1:0] a, input [INTEGER_BITS+FIXED_POINT_BITS-1:0] b, output reg [INTEGER_BITS+FIXED_POINT_BITS-1:0] c);
     parameter INTEGER_BITS = 9;
     parameter FIXED_POINT_BITS = 4;
