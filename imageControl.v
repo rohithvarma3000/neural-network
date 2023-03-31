@@ -29,7 +29,7 @@ output                   o_pixel_data_valid,
 output reg               o_intr
 );
 
-parameter INTEGER_BITS = 8;
+parameter INTEGER_BITS = 9;
 parameter FIXED_POINT_BITS = 4;
 
 reg [8:0] pixelCounter;
