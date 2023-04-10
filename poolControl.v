@@ -17,10 +17,10 @@ reg [1:0] currentWrLineBuffer;
 reg [3:0] lineBuffDataValid;
 reg [3:0] lineBuffRdData;
 reg [1:0] currentRdLineBuffer;
-wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb0data;
-wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb1data;
-wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb2data;
-wire [(INTEGER_BITS+FIXED_POINT_BITS)*3-1:0] lb3data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] lb0data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] lb1data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] lb2data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] lb3data;
 reg [8:0] rdCounter;
 reg rd_line_buffer;
 reg [11:0] totalPixelCounter;
@@ -29,7 +29,7 @@ reg rdState;
 localparam IDLE = 'b0,
            RD_BUFFER = 'b1;
 
-assign o_pixel_data_valid = rd_line_buffer;
+assign pool_input_data_valid = rd_line_buffer;
 
 always @(posedge i_clk)
 begin
