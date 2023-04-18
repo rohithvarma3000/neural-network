@@ -1,16 +1,16 @@
 `timescale 1ns / 1ps
 
-module poolControl (
+module poolControl #(
+    parameter INTEGER_BITS = 9,
+    parameter FIXED_POINT_BITS = 4
+) (
     input reset,
     input [INTEGER_BITS+FIXED_POINT_BITS-1:0] o_convolved_data,
     input o_convolved_data_valid,
     input clk,
     output reg [(INTEGER_BITS+FIXED_POINT_BITS)*4-1:0] pool_input_data,
-    output reg pool_input_data_valid,
+    output reg pool_input_data_valid
 );
-
-    parameter INTEGER_BITS = 9;
-    parameter FIXED_POINT_BITS = 4;
 
     reg [8:0] pixelCounter;
 reg [1:0] currentWrLineBuffer;
@@ -29,7 +29,7 @@ reg rdState;
 localparam IDLE = 'b0,
            RD_BUFFER = 'b1;
 
-assign pool_input_data_valid = rd_line_buffer;
+//pool_input_data_valid = rd_line_buffer;
 
 always @(posedge i_clk)
 begin
@@ -50,13 +50,11 @@ begin
     begin
         rdState <= IDLE;
         rd_line_buffer <= 1'b0;
-        o_intr <= 1'b0;
     end
     else
     begin
         case(rdState)
             IDLE:begin
-                o_intr <= 1'b0;
                 if(totalPixelCounter >= 1536)
                 begin
                     rd_line_buffer <= 1'b1;
@@ -68,7 +66,6 @@ begin
                 begin
                     rdState <= IDLE;
                     rd_line_buffer <= 1'b0;
-                    o_intr <= 1'b1;
                 end
             end
         endcase
@@ -134,16 +131,18 @@ always @(*)
 begin
     case(currentRdLineBuffer)
         0:begin
-            o_pixel_data = {lb2data,lb1data,lb0data};
+            pool_input_data = {lb0data,lb1data};
+            pool_input_data_valid = rd_line_buffer;
         end
         1:begin
-            o_pixel_data = {lb3data,lb2data,lb1data};
+            pool_input_data_valid = 0;
         end
         2:begin
-            o_pixel_data = {lb0data,lb3data,lb2data};
+            pool_input_data = {lb2data,lb3data};
+            pool_input_data_valid = rd_line_buffer;
         end
         3:begin
-            o_pixel_data = {lb1data,lb0data,lb3data};
+            pool_input_data_valid = 0;
         end
     endcase
 end
