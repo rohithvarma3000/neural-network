@@ -1,7 +1,9 @@
 `timescale 1ns / 1ps
 
-
-module imageProcessTop(
+module imageProcessTop #(
+    parameter INTEGER_BITS = 9,
+    parameter FIXED_POINT_BITS = 4
+)(
 input   axi_clk,
 input   axi_reset_n,
 //slave interface
@@ -9,26 +11,21 @@ input   i_data_valid,
 input [INTEGER_BITS+FIXED_POINT_BITS-1:0] i_data,
 input kernel_reset,
 input [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0]kernel_vals,
-output  o_data_ready,
+//output  o_data_ready,
 //master interface
 output  o_data_valid,
-output [INTEGER_BITS+FIXED_POINT_BITS-1:0] o_data,
-input   i_data_ready,
-//interrupt
-output  o_intr
-
+output [(INTEGER_BITS+FIXED_POINT_BITS)*2-1:0] o_data
+//input   i_data_ready
     );
 
-parameter INTEGER_BITS = 8;
-parameter FIXED_POINT_BITS = 4;
-
 wire [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0] pixel_data;
+wire [(INTEGER_BITS+FIXED_POINT_BITS)*4-1:0] pool_input_data;
 wire pixel_data_valid;
-wire axis_prog_full;
-wire [INTEGER_BITS+FIXED_POINT_BITS-1:0] convolved_data;
-wire convolved_data_valid;
+//wire axis_prog_full;
+wire [INTEGER_BITS+FIXED_POINT_BITS-1:0] convolved_data, pool_output;
+wire convolved_data_valid, pool_input_data_valid;
 
-assign o_data_ready = !axis_prog_full;
+//assign o_data_ready = !axis_prog_full;
     
 imageControl IC(
     .i_clk(axi_clk),
@@ -50,20 +47,28 @@ imageControl IC(
      .o_convolved_data_valid(convolved_data_valid)
  ); 
  
- outputBuffer OB (
-   .wr_rst_busy(),        // output wire wr_rst_busy
-   .rd_rst_busy(),        // output wire rd_rst_busy
-   .s_aclk(axi_clk),                  // input wire s_aclk
-   .s_aresetn(axi_reset_n),            // input wire s_aresetn
-   .s_axis_tvalid(convolved_data_valid),    // input wire s_axis_tvalid
-   .s_axis_tready(),    // output wire s_axis_tready
-   .s_axis_tdata(convolved_data),      // input wire [7 : 0] s_axis_tdata
-   .m_axis_tvalid(o_data_valid),    // output wire m_axis_tvalid
-   .m_axis_tready(i_data_ready),    // input wire m_axis_tready
-   .m_axis_tdata(o_data),      // output wire [7 : 0] m_axis_tdata
-   .axis_prog_full(axis_prog_full)  // output wire axis_prog_full
- );
-  
-    
+poolControl PC(
+    .reset(!axi_reset_n),
+    .o_convolved_data(convolved_data),
+    .o_convolved_data_valid(convolved_data_valid),
+    .clk(axi_clk),
+    .pool_input_data(pool_input_data),
+    .pool_input_data_valid(pool_input_data_valid)
+);
+
+max_pool_2 pool(
+    .clk(axi_clk),
+    .data(pool_input_data),
+    .out(pool_output)
+);
+
+neural_network nn(
+    .i_clk(axi_clk),
+    .i_reset(!axi_reset_n),
+    .pool_output(pool_output),
+    .pool_output_valid(pool_input_data_valid),
+    .neurons(o_data),
+    .output_valid(o_data_valid)
+);
     
 endmodule
