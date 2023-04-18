@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
 
-module imageControl(
+module imageControl#(
+    parameter INTEGER_BITS = 9,
+    parameter FIXED_POINT_BITS = 4
+)(
 input                    i_clk,
 input                    i_rst,
 input [INTEGER_BITS+FIXED_POINT_BITS-1:0]  i_pixel_data,
@@ -9,9 +12,6 @@ output reg [(INTEGER_BITS+FIXED_POINT_BITS)*9-1:0]        o_pixel_data,
 output                   o_pixel_data_valid,
 output reg               o_intr
 );
-
-parameter INTEGER_BITS = 9;
-parameter FIXED_POINT_BITS = 4;
 
 reg [8:0] pixelCounter;
 reg [1:0] currentWrLineBuffer;
